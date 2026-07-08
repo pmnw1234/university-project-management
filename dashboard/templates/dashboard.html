@@ -1,0 +1,273 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard | UPMS{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Welcome & Project Select Row -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <div>
+        <h1 class="text-xl md:text-2xl font-bold text-slate-900 flex items-center gap-2">Welcome back, John! 👋</h1>
+        <p class="text-sm text-slate-500 mt-0.5">Here's what's happening with your project.</p>
+    </div>
+    <div class="card bg-white px-4 py-2 border border-slate-200 rounded-xl shadow-sm text-xs max-w-xs w-full sm:w-auto">
+        <label class="block text-[10px] uppercase font-bold text-slate-400 tracking-wider">Active Project</label>
+        <select class="bg-transparent font-semibold text-slate-700 outline-none cursor-pointer w-full mt-0.5">
+            <option>Smart Library Management System</option>
+            <option>AI Research Assistant Portal</option>
+        </select>
+    </div>
+</div>
+
+<!-- STATS ROW (5 Metrics Cards) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+    <!-- Overall Progress -->
+    <div class="card bg-white p-4 border border-slate-200 rounded-2xl flex items-center gap-4 shadow-sm">
+        <div class="relative flex items-center justify-center shrink-0">
+            <!-- Simple SVG Circle Progress -->
+            <svg class="w-16 h-16 transform -rotate-90">
+                <circle cx="32" cy="32" r="26" stroke="#f1f5f9" stroke-width="5" fill="transparent" />
+                <circle cx="32" cy="32" r="26" stroke="#10b981" stroke-width="5" fill="transparent" stroke-dasharray="163.3" stroke-dashoffset="45.7" />
+            </svg>
+            <span class="absolute text-sm font-bold text-slate-800">72%</span>
+        </div>
+        <div>
+            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Overall Progress</p>
+            <p class="text-xs text-emerald-600 font-semibold mt-1"><i class="fa-solid fa-circle-check mr-1"></i> On Track</p>
+        </div>
+    </div>
+
+    <!-- Total Tasks -->
+    <div class="card bg-white p-4 border border-slate-200 rounded-2xl flex items-center gap-4 shadow-sm">
+        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl shrink-0">
+            <i class="fa-solid fa-list-check"></i>
+        </div>
+        <div>
+            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Tasks</p>
+            <h3 class="text-xl font-bold text-slate-800">24</h3>
+            <a href="#" class="text-[11px] text-blue-600 font-medium hover:underline flex items-center gap-0.5">View all tasks <i class="fa-solid fa-arrow-right text-[9px]"></i></a>
+        </div>
+    </div>
+
+    <!-- Completed Tasks -->
+    <div class="card bg-white p-4 border border-slate-200 rounded-2xl flex items-center gap-4 shadow-sm">
+        <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl shrink-0">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div>
+            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Completed Tasks</p>
+            <h3 class="text-xl font-bold text-slate-800">17</h3>
+            <p class="text-[11px] text-emerald-600 font-medium">71% Completed</p>
+        </div>
+    </div>
+
+    <!-- Pending Tasks -->
+    <div class="card bg-white p-4 border border-slate-200 rounded-2xl flex items-center gap-4 shadow-sm">
+        <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center text-xl shrink-0">
+            <i class="fa-solid fa-clock"></i>
+        </div>
+        <div>
+            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Pending Tasks</p>
+            <h3 class="text-xl font-bold text-slate-800">7</h3>
+            <p class="text-[11px] text-orange-500 font-medium">Due soon</p>
+        </div>
+    </div>
+
+    <!-- Upcoming Deadlines -->
+    <div class="card bg-white p-4 border border-slate-200 rounded-2xl flex items-center gap-4 shadow-sm">
+        <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center text-xl shrink-0">
+            <i class="fa-solid fa-calendar-xmark"></i>
+        </div>
+        <div>
+            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Upcoming</p>
+            <h3 class="text-xl font-bold text-slate-800">3</h3>
+            <p class="text-[10px] text-slate-500 truncate leading-tight mt-0.5">Next: <span class="text-rose-600 font-semibold">Design Report</span></p>
+        </div>
+    </div>
+</div>
+
+<!-- THREE COLUMN GRID MAIN CONTENT -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- LEFT COLUMN: Milestone Progress & Activities -->
+    <div class="flex flex-col gap-6">
+        <!-- Milestone Progress Card -->
+        <div class="card bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-slate-800 text-sm">Milestone Progress</h3>
+                <a href="#" class="text-xs text-blue-600 font-medium hover:underline">View all milestones &rarr;</a>
+            </div>
+            <div class="flex flex-col gap-4">
+                <!-- Row Items -->
+                <div class="flex flex-col gap-1">
+                    <div class="flex justify-between text-xs font-medium">
+                        <span class="text-slate-700">1. Proposal</span>
+                        <span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded text-[10px] font-bold">Completed</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div class="bg-indigo-600 h-full rounded-full" style="width: 100%"></div>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <div class="flex justify-between text-xs font-medium">
+                        <span class="text-slate-700">2. Requirement Analysis</span>
+                        <span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded text-[10px] font-bold">Completed</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div class="bg-indigo-600 h-full rounded-full" style="width: 100%"></div>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <div class="flex justify-between text-xs font-medium">
+                        <span class="text-slate-700">3. System Design</span>
+                        <span class="text-blue-600 bg-blue-50 px-2 py-0.5 rounded text-[10px] font-bold">In Progress</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div class="bg-orange-400 h-full rounded-full" style="width: 70%"></div>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <div class="flex justify-between text-xs font-medium">
+                        <span class="text-slate-700">4. Development</span>
+                        <span class="text-blue-600 bg-blue-50 px-2 py-0.5 rounded text-[10px] font-bold">In Progress</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div class="bg-emerald-500 h-full rounded-full" style="width: 40%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activities Card -->
+        <div class="card bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-slate-800 text-sm">Recent Activities</h3>
+            </div>
+            <div class="flex flex-col gap-4 text-xs">
+                <div class="flex justify-between items-start gap-2">
+                    <p class="text-slate-600"><span class="font-semibold text-slate-800">Jane Smith</span> uploaded document <span class="text-blue-600 font-medium">SRS_v1.docx</span></p>
+                    <span class="text-slate-400 shrink-0 text-[10px]">2 hours ago</span>
+                </div>
+                <div class="flex justify-between items-start gap-2">
+                    <p class="text-slate-600">You completed task <span class="font-semibold text-slate-800">Database Schema Design</span></p>
+                    <span class="text-slate-400 shrink-0 text-[10px]">5 hours ago</span>
+                </div>
+                <div class="flex justify-between items-start gap-2">
+                    <p class="text-slate-600"><span class="font-semibold text-slate-800">Mike Johnson</span> commented on Design Report</p>
+                    <span class="text-slate-400 shrink-0 text-[10px]">1 day ago</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MIDDLE COLUMN: Task Overview & Project Health -->
+    <div class="flex flex-col gap-6">
+        <!-- Task Overview Chart Block -->
+        <div class="card bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+            <div>
+                <h3 class="font-bold text-slate-800 text-sm mb-4">Task Overview</h3>
+                <div class="flex justify-center items-center py-4">
+                    <!-- Simple Mock Pie/Donut Chart Structure -->
+                    <div class="relative w-36 h-36 rounded-full border-[16px] border-emerald-500 flex items-center justify-center">
+                        <div class="absolute inset-0 rounded-full border-[16px] border-transparent border-t-orange-400 border-l-rose-500 transform rotate-45 pointer-events-none"></div>
+                        <div class="text-center">
+                            <span class="block text-2xl font-extrabold text-slate-800">71%</span>
+                            <span class="text-[10px] text-slate-400 font-medium uppercase">Done</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-center gap-4 text-[11px] font-semibold mt-4 border-t border-slate-100 pt-4">
+                <span class="text-emerald-600"><i class="fa-solid fa-circle mr-1 text-[8px]"></i> Completed (17)</span>
+                <span class="text-orange-500"><i class="fa-solid fa-circle mr-1 text-[8px]"></i> In Progress (4)</span>
+                <span class="text-rose-500"><i class="fa-solid fa-circle mr-1 text-[8px]"></i> To Do (3)</span>
+            </div>
+        </div>
+
+        <!-- Project Health Gauge Block -->
+        <div class="card bg-white border border-slate-200 rounded-2xl p-5 shadow-sm text-center">
+            <h3 class="font-bold text-slate-800 text-sm mb-4 text-left">Project Health</h3>
+            <div class="relative inline-flex flex-col items-center justify-center mt-2">
+                <!-- Half Gauge layout using SVG -->
+                <svg class="w-40 h-24">
+                    <path d="M20,90 A60,60 0 0,1 160,90" fill="none" stroke="#f1f5f9" stroke-width="14" stroke-linecap="round"/>
+                    <path d="M20,90 A60,60 0 0,1 145,40" fill="none" stroke="#10b981" stroke-width="14" stroke-linecap="round"/>
+                </svg>
+                <div class="absolute bottom-4">
+                    <h2 class="text-3xl font-extrabold text-slate-800">85<span class="text-xs text-slate-400 font-normal">/100</span></h2>
+                    <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Good</span>
+                </div>
+            </div>
+            <p class="text-xs text-slate-500 mt-2">Keep going! Your project is on track.</p>
+        </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Upcoming Deadlines & Team Members -->
+    <div class="flex flex-col gap-6">
+        <!-- Upcoming Deadlines List -->
+        <div class="card bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-slate-800 text-sm">Upcoming Deadlines</h3>
+                <a href="#" class="text-xs text-blue-600 font-medium hover:underline">View calendar &rarr;</a>
+            </div>
+            <div class="flex flex-col gap-4">
+                <!-- Item -->
+                <div class="flex items-start gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <div class="p-2.5 bg-rose-50 text-rose-600 rounded-lg text-sm shrink-0"><i class="fa-solid fa-calendar-day"></i></div>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex justify-between items-start gap-1">
+                            <h4 class="text-xs font-bold text-slate-800 truncate">Design Report</h4>
+                            <span class="text-[10px] font-bold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded shrink-0">In 2 days</span>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-0.5">Milestone: System Design</p>
+                    </div>
+                </div>
+                <!-- Item -->
+                <div class="flex items-start gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <div class="p-2.5 bg-orange-50 text-orange-600 rounded-lg text-sm shrink-0"><i class="fa-solid fa-calendar-day"></i></div>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex justify-between items-start gap-1">
+                            <h4 class="text-xs font-bold text-slate-800 truncate">Database Design</h4>
+                            <span class="text-[10px] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded shrink-0">In 4 days</span>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-0.5">Task Profile Breakdown</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Team Members Card -->
+        <div class="card bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-slate-800 text-sm">Team Members</h3>
+                <a href="#" class="text-xs text-blue-600 font-medium hover:underline">View all &rarr;</a>
+            </div>
+            <div class="flex flex-col gap-3">
+                <!-- Member Row -->
+                <div class="flex items-center justify-between gap-2 text-xs">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=indigo&color=fff" class="w-8 h-8 rounded-full shrink-0" alt="">
+                        <div class="truncate">
+                            <h4 class="font-bold text-slate-800 truncate">John Doe (You)</h4>
+                            <p class="text-[10px] text-slate-400">Team Leader</p>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-bold text-slate-600 shrink-0 bg-slate-100 px-2 py-1 rounded">8/10 tasks</span>
+                </div>
+                <!-- Member Row -->
+                <div class="flex items-center justify-between gap-2 text-xs">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <img src="https://ui-avatars.com/api/?name=Jane+Smith&background=emerald&color=fff" class="w-8 h-8 rounded-full shrink-0" alt="">
+                        <div class="truncate">
+                            <h4 class="font-bold text-slate-800 truncate">Jane Smith</h4>
+                            <p class="text-[10px] text-slate-400">Developer</p>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-bold text-slate-600 shrink-0 bg-slate-100 px-2 py-1 rounded">6/8 tasks</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
