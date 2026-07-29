@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supervisor Signup | UPMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
+
+<div class="max-w-md w-full bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+    <div class="text-center mb-6">
+        <h1 class="text-2xl font-bold text-slate-800">UPMS</h1>
+        <p class="text-sm text-slate-500 mt-1">Supervisor Account Registration Request</p>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="mb-4 p-3 rounded-lg text-xs font-medium bg-red-100 text-red-700 border border-red-200">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST" action="{% url 'supervisor_signup' %}" class="space-y-4">
+        {% csrf_token %}
+        
+        <div>
+            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Full Name</label>
+            <input type="text" name="full_name" required placeholder="Dr. John Doe" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+        </div>
+
+        <div>
+            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Username</label>
+            <input type="text" name="username" required placeholder="johndoe" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+        </div>
+
+        <div>
+            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Email</label>
+            <input type="email" name="email" required placeholder="supervisor@university.edu" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+        </div>
+
+        <div>
+            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Department</label>
+            <input type="text" name="department" required placeholder="Computer Science" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+        </div>
+
+        <div>
+            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Password</label>
+            <input type="password" name="password" required placeholder="••••••••" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-indigo-600 text-white font-medium text-sm rounded-lg hover:bg-indigo-700 transition duration-150">
+            Submit Account Request
+        </button>
+    </form>
+</div>
+
+</body>
+</html>

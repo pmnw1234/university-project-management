@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Account Status | UPMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-100 font-sans p-8">
+
+<div class="max-w-4xl mx-auto space-y-6">
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h2 class="text-xl font-bold text-slate-800 mb-4">Supervisor Registration Request Status</h2>
+
+        <div class="border border-slate-200 rounded-xl p-6 bg-slate-50">
+            <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-4">Request Status Details</h3>
+
+            <div class="flex items-center justify-between bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">
+                        {{ req.username|slice:":2"|upper }}
+                    </div>
+                    <div>
+                        <p class="font-bold text-slate-800">{{ req.full_name }} (<span class="text-slate-500">@{{ req.username }}</span>)</p>
+                        <p class="text-xs text-slate-400">{{ req.email }} • {{ req.department }}</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Submitted {{ req.created_at|timesince }} ago</p>
+                    </div>
+                </div>
+
+                <div>
+                    {% if req.status == 'Pending' %}
+                        <span class="px-4 py-1.5 rounded-md bg-amber-100 text-amber-800 text-xs font-semibold shadow-sm">
+                            Pending
+                        </span>
+                    {% elif req.status == 'Approved' %}
+                        <span class="px-4 py-1.5 rounded-md bg-emerald-100 text-emerald-800 text-xs font-semibold shadow-sm">
+                            Approved
+                        </span>
+                    {% else %}
+                        <span class="px-4 py-1.5 rounded-md bg-red-100 text-red-800 text-xs font-semibold shadow-sm">
+                            Rejected
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if req.status == 'Pending' %}
+                <p class="text-xs text-amber-600 mt-4 flex items-center">
+                    <i class="fas fa-info-circle mr-1.5"></i>
+                    Your account request has been sent to the Admin. Once approved, you can log in to your dashboard.
+                </p>
+            {% elif req.status == 'Approved' %}
+                <div class="mt-4">
+                    <a href="/login/" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs font-medium hover:bg-indigo-700">
+                        Proceed to Login
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -6,7 +6,12 @@ from .forms import RegistrationForm
 from .models import Profile, User
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
+<<<<<<< HEAD
 from .models import Project, Task, Milestone, ActivityLog, Team
+=======
+from .models import Project, Task, Milestone, ActivityLog
+from django.shortcuts import render, redirect, get_object_or_404
+>>>>>>> 7ce9afe351e51589e5f5be5eac14bb47bf8fee0b
 
 @login_required
 def dashboard_view(request):
@@ -68,11 +73,12 @@ def register_view(request):
             user.set_password(form.cleaned_data['password'])
             user.save()
             
-            # Create the corresponding Profile record
+            raw_role = form.cleaned_data['role']
+            
             Profile.objects.create(
                 user=user,
-                role=form.cleaned_data['role'],
-                student_id=form.cleaned_data['student_id'] if form.cleaned_data['role'] == 'student' else None
+                role=raw_role,
+                student_id=form.cleaned_data['student_id'] if raw_role.lower() == 'student' else None
             )
             
             messages.success(request, "Registration successful! You can now log in.")
@@ -90,7 +96,17 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('dashboard') # Redirect directly to your UI dashboard layout
+                try:
+                    user_role = user.profile.role.lower()
+                    if user_role == 'supervisor':
+                        return redirect('supervisor_dashboard')
+                    elif user_role == 'student':
+                        return redirect('dashboard')
+                    elif user_role == 'admin':
+                        return redirect('admin_dashboard')
+                except:
+                    pass
+                return redirect('dashboard')
             else:
                 messages.error(request, "Invalid username or password.")
         else:
@@ -199,3 +215,5 @@ def edit_profile(request):
     }
     return render(request, 'edit_profile.html', context)
 # Create your views here.
+def admin_dashboard_view(request):
+    return render(request, 'Admindashboard.html')
