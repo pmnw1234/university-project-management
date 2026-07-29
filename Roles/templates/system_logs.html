@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>System Logs | Admin UPMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 p-8 font-sans">
+
+<div class="max-w-4xl mx-auto bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-slate-800">All System Activity Logs</h2>
+        <a href="{% url 'admin_dashboard' %}" class="text-xs text-indigo-600 font-medium hover:underline">← Back to Dashboard</a>
+    </div>
+
+    <div class="space-y-3">
+        {% for log in logs %}
+        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex justify-between items-center">
+            <div>
+                <p class="text-sm font-bold text-slate-800">Registration Attempt: {{ log.full_name }} (@{{ log.username }})</p>
+                <p class="text-xs text-slate-400">Department: {{ log.department }} • Date: {{ log.created_at }}</p>
+            </div>
+            <div>
+                {% if log.status == 'Pending' %}
+                    <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-md">Pending</span>
+                {% elif log.status == 'Approved' %}
+                    <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-md">Approved</span>
+                {% else %}
+                    <span class="px-3 py-1 bg-red-100 text-red-800 text-xs font-bold rounded-md">Rejected</span>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-xs text-slate-400 text-center py-6">No logs present.</p>
+        {% endfor %}
+    </div>
+</div>
+
+</body>
+</html>

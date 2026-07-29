@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>System Logs - Supervisor Requests</title>
+</head>
+<body>
+    <h2>Pending Supervisor Account Requests</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Requested Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for req in pending_requests %}
+            <tr>
+                <td>{{ req.first_name }} {{ req.last_name }}</td>
+                <td>{{ req.email }}</td>
+                <td>{{ req.department }}</td>
+                <td>{{ req.created_at }}</td>
+                <td>
+                    <a href="{% url 'approve_supervisor_request' req.id %}">Approve</a> |
+                    <a href="{% url 'reject_supervisor_request' req.id %}">Reject</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No pending requests found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
