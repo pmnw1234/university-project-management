@@ -3,10 +3,10 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from .forms import RegistrationForm
-from .models import Profile
+from .models import Profile, User
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from .models import Project, Task, Milestone, ActivityLog
+from .models import Project, Task, Milestone, ActivityLog, Team
 
 @login_required
 def dashboard_view(request):
@@ -39,7 +39,8 @@ def dashboard_view(request):
         progress_percentage = int((completed_tasks / total_tasks) * 100) if total_tasks > 0 else 0
         
         # Deadlines and timelines
-        upcoming_deadlines = tasks.filter(status='todo', due_date__gte=timezone.now().date()).order_date_by('due_date')[:5]
+        # ✅ CORRECT
+        upcoming_deadlines = tasks.filter(status='todo', due_date__gte=timezone.now().date()).order_by('due_date')[:5]
         milestones = active_project.milestones.all()
         activities = active_project.activities.all()[:5]
         team_members = active_project.members.all()
@@ -101,4 +102,100 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+@login_required
+def projects(request):
+
+    projects = Project.objects.filter(
+        members=request.user
+    )
+
+    context = {
+        "projects": projects,
+    }
+
+    return render(request, "projects.html", context)
+
+@login_required
+def create_project(request):
+    # Only fetch teams where current user is the leader
+    user_led_teams = Team.objects.filter(leader=request.user)
+
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        team_id = request.POST.get('team')
+        supervisor_username = request.POST.get('supervisor_username', '').strip()
+
+        # 1. Validate Team selection and ensure user is the leader
+        try:
+            team = Team.objects.get(id=team_id, leader=request.user)
+        except Team.DoesNotExist:
+            messages.error(request, "Only team leaders can create or submit a project proposal for this team.")
+            return render(request, 'create_project.html', {'user_led_teams': user_led_teams})
+
+        # 2. Look up Supervisor by Username
+        supervisor = None
+        if supervisor_username:
+            try:
+                supervisor = User.objects.get(username=supervisor_username)
+            except User.DoesNotExist:
+                messages.error(request, f"Supervisor username '{supervisor_username}' does not exist.")
+                return render(request, 'create_project.html', {
+                    'user_led_teams': user_led_teams,
+                    'name': name,
+                    'description': description,
+                    'supervisor_username': supervisor_username,
+                })
+
+        # 3. Create Project & Add Members
+        project = Project.objects.create(
+            name=name,
+            description=description,
+            team=team,
+            supervisor=supervisor,
+            status='pending'  # Sent as proposal
+        )
+
+        # Add leader and all team members to project.members
+        project.members.add(team.leader)
+        project.members.add(*team.members.all())
+
+        messages.success(request, "Project proposal submitted successfully!")
+        return redirect('projects')
+
+    context = {
+        'user_led_teams': user_led_teams
+    }
+    return render(request, 'create_project.html', context)
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .forms import UserUpdateForm, ProfileUpdateForm
+
+@login_required
+def edit_profile(request):
+    profile_instance, created = Profile.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=profile_instance)
+
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            messages.success(request, 'Your profile has been updated successfully!')
+            
+            # Change redirect target from 'edit_profile' to 'dashboard'
+            return redirect('dashboard')
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm(instance=profile_instance)
+
+    context = {
+        'u_form': u_form,
+        'p_form': p_form,
+    }
+    return render(request, 'edit_profile.html', context)
 # Create your views here.

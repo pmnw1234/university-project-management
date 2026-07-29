@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Create Project{% endblock %}
+{% block page_title %}Create Project{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto">
+  <div class="bg-white dark:bg-slate-800 rounded-2xl shadow p-8">
+    <h2 class="text-3xl font-bold mb-8 dark:text-white">Create New Project Proposal</h2>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="mb-6 p-4 rounded-xl text-sm font-semibold {% if message.tags == 'error' %}bg-rose-100 text-rose-700 border border-rose-200{% else %}bg-emerald-100 text-emerald-700 border border-emerald-200{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    {% if user_led_teams %}
+      <form method="POST">
+        {% csrf_token %}
+
+        <!-- Project Title -->
+        <div class="mb-6">
+          <label class="font-semibold block mb-2 dark:text-white">Project Title</label>
+          <input type="text" name="name" value="{{ name|default:'' }}" required placeholder="Enter project title..." class="w-full rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white px-5 py-3 focus:ring-2 focus:ring-indigo-500">
+        </div>
+
+        <!-- Team Selection (Only Teams Led by User) -->
+        <div class="mb-6">
+          <label class="font-semibold block mb-2 dark:text-white">Select Your Team</label>
+          <select name="team" required class="w-full rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white px-5 py-3 focus:ring-2 focus:ring-indigo-500">
+            <option value="" disabled selected>-- Choose Team --</option>
+            {% for team in user_led_teams %}
+              <option value="{{ team.id }}">{{ team.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Supervisor Username Input -->
+        <div class="mb-6">
+          <label class="font-semibold block mb-2 dark:text-white">Supervisor Username</label>
+          <input type="text" name="supervisor_username" value="{{ supervisor_username|default:'' }}" placeholder="Type supervisor's username (e.g. prof_john)" class="w-full rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white px-5 py-3 focus:ring-2 focus:ring-indigo-500">
+        </div>
+
+        <!-- Description -->
+        <div class="mb-6">
+          <label class="font-semibold block mb-2 dark:text-white">Project Description</label>
+          <textarea rows="6" name="description" required placeholder="Describe your project..." class="w-full rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white px-5 py-3 focus:ring-2 focus:ring-indigo-500">{{ description|default:'' }}</textarea>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-end gap-4">
+          <a href="{% url 'projects' %}" class="px-6 py-3 rounded-xl bg-slate-200 dark:bg-slate-700 dark:text-white">Cancel</a>
+          <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-xl font-semibold">Submit Proposal</button>
+        </div>
+      </form>
+
+    {% else %}
+      <!-- Guard view for users who are not leaders of any team -->
+      <div class="text-center py-8">
+        <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h3 class="text-xl font-bold dark:text-white mb-2">Team Leader Permission Required</h3>
+        <p class="text-slate-500 dark:text-slate-400 mb-6">You are not designated as a Team Leader for any team. Only team leaders are authorized to submit project proposals.</p>
+        <a href="{% url 'projects' %}" class="bg-indigo-600 text-white px-6 py-2.5 rounded-xl text-sm font-medium">Back to Projects</a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
