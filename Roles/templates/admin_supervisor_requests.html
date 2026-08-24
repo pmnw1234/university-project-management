@@ -1,38 +1,95 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>System Logs - Supervisor Requests</title>
-</head>
-<body>
-    <h2>Pending Supervisor Account Requests</h2>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Department</th>
-                <th>Requested Date</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for req in pending_requests %}
-            <tr>
-                <td>{{ req.first_name }} {{ req.last_name }}</td>
-                <td>{{ req.email }}</td>
-                <td>{{ req.department }}</td>
-                <td>{{ req.created_at }}</td>
-                <td>
-                    <a href="{% url 'approve_supervisor_request' req.id %}">Approve</a> |
-                    <a href="{% url 'reject_supervisor_request' req.id %}">Reject</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="5">No pending requests found.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Supervisor Requests{% endblock %}
+{% block page_title %}System Logs & Requests{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-8">
+    
+    <!-- Pending Requests Table -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow p-6 border border-slate-200 dark:border-slate-700">
+        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-clock text-amber-500"></i> Pending Supervisor Requests
+        </h3>
+
+        {% if pending_requests %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-600 dark:text-slate-300">
+                    <thead class="bg-slate-50 dark:bg-slate-700/50 text-xs text-slate-500 uppercase">
+                        <tr>
+                            <th class="p-3">Name</th>
+                            <th class="p-3">Email</th>
+                            <th class="p-3">Department</th>
+                            <th class="p-3">Submitted</th>
+                            <th class="p-3 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                        {% for req in pending_requests %}
+                            <tr>
+                                <td class="p-3 font-semibold text-slate-800 dark:text-white">{{ req.first_name }} {{ req.last_name }}</td>
+                                <td class="p-3">{{ req.email }}</td>
+                                <td class="p-3">{{ req.department }}</td>
+                                <td class="p-3 text-xs text-slate-400">{{ req.created_at|date:"M d, Y H:i" }}</td>
+                                <td class="p-3 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <a href="{% url 'approve_supervisor_request' request_id=req.id %}" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition">
+                                            Approve
+                                        </a>
+                                        <a href="{% url 'reject_supervisor_request' request_id=req.id %}" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold transition">
+                                            Reject
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-sm text-slate-400 py-4">No pending requests at this time.</p>
+        {% endif %}
+    </div>
+
+    <!-- All Requests Log -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow p-6 border border-slate-200 dark:border-slate-700">
+        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Request History</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-600 dark:text-slate-300">
+                <thead class="bg-slate-50 dark:bg-slate-700/50 text-xs text-slate-500 uppercase">
+                    <tr>
+                        <th class="p-3">Name</th>
+                        <th class="p-3">Email</th>
+                        <th class="p-3">Status</th>
+                        <th class="p-3">Registration Link</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                    {% for req in all_requests %}
+                        <tr>
+                            <td class="p-3 font-medium">{{ req.first_name }} {{ req.last_name }}</td>
+                            <td class="p-3">{{ req.email }}</td>
+                            <td class="p-3">
+                                {% if req.status == 'PENDING' %}
+                                    <span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-700">Pending</span>
+                                {% elif req.status == 'APPROVED' %}
+                                    <span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-700">Approved</span>
+                                {% else %}
+                                    <span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-rose-100 text-rose-700">Rejected</span>
+                                {% endif %}
+                            </td>
+                            <td class="p-3 text-xs">
+                                {% if req.status == 'APPROVED' %}
+                                    <a href="{% url 'supervisor_register' request_id=req.id %}" class="text-indigo-600 hover:underline">View Registration Link</a>
+                                {% else %}
+                                    <span class="text-slate-400">N/A</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

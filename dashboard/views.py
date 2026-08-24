@@ -6,12 +6,10 @@ from .forms import RegistrationForm
 from .models import Profile, User
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-<<<<<<< HEAD
 from .models import Project, Task, Milestone, ActivityLog, Team
-=======
-from .models import Project, Task, Milestone, ActivityLog
 from django.shortcuts import render, redirect, get_object_or_404
->>>>>>> 7ce9afe351e51589e5f5be5eac14bb47bf8fee0b
+from Roles.models import SupervisorRequest
+from django.db import transaction
 
 @login_required
 def dashboard_view(request):
@@ -66,54 +64,399 @@ def dashboard_view(request):
     return render(request, 'dashboard.html', context)
 
 def register_view(request):
-    if request.method == 'POST':
+
+    if request.method == "POST":
+
+        print("\n" + "=" * 70)
+        print("📝 REGISTRATION POST RECEIVED")
+        print("POST DATA:")
+        print(request.POST)
+        print("=" * 70)
+
         form = RegistrationForm(request.POST)
-        if form.is_value_valid() if hasattr(form, 'is_value_valid') else form.is_valid():
-            user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])
-            user.save()
-            
-            raw_role = form.cleaned_data['role']
-            
-            Profile.objects.create(
-                user=user,
-                role=raw_role,
-                student_id=form.cleaned_data['student_id'] if raw_role.lower() == 'student' else None
+
+        print("\nFORM VALID:", form.is_valid())
+
+        if not form.is_valid():
+
+            print("\n❌ FORM ERRORS:")
+            print(form.errors)
+            print("=" * 70 + "\n")
+
+            messages.error(
+                request,
+                "Registration form is invalid. Please check the fields."
             )
-            
-            messages.success(request, "Registration successful! You can now log in.")
-            return redirect('login')
+
+            return render(
+                request,
+                "register.html",
+                {"form": form}
+            )
+
+        print("\n✅ FORM IS VALID")
+
+        username = form.cleaned_data["username"]
+        email = form.cleaned_data["email"]
+        password = form.cleaned_data["password"]
+
+        role = form.cleaned_data["role"].lower()
+
+        student_id = form.cleaned_data.get("student_id")
+        staff_id = form.cleaned_data.get("staff_id")
+
+        department = request.POST.get("department", "General")
+
+        print("Username:", username)
+        print("Email:", email)
+        print("Role:", role)
+        print("Student ID:", student_id)
+        print("Staff ID:", staff_id)
+        print("Department:", department)
+
+        # ----------------------------------------
+        # DUPLICATE USERNAME
+        # ----------------------------------------
+        if User.objects.filter(username=username).exists():
+
+            print("❌ USERNAME ALREADY EXISTS")
+
+            messages.error(
+                request,
+                "Username already exists."
+            )
+
+            return render(
+                request,
+                "register.html",
+                {"form": form}
+            )
+
+        # ----------------------------------------
+        # DUPLICATE EMAIL
+        # ----------------------------------------
+        if User.objects.filter(email=email).exists():
+
+            print("❌ EMAIL ALREADY EXISTS")
+
+            messages.error(
+                request,
+                "Email already exists."
+            )
+
+            return render(
+                request,
+                "register.html",
+                {"form": form}
+            )
+
+        try:
+
+            print("\n🔄 STARTING DATABASE TRANSACTION")
+
+            with transaction.atomic():
+
+                # ----------------------------------------
+                # CREATE USER
+                # ----------------------------------------
+                user = User.objects.create_user(
+                    username=username,
+                    email=email,
+                    password=password,
+                )
+
+                print("✅ USER CREATED")
+                print("User ID:", user.id)
+
+                # Supervisor must wait for admin
+                if role == "supervisor":
+
+                    user.is_active = False
+                    user.save()
+
+                    print("🔒 SUPERVISOR ACCOUNT SET INACTIVE")
+
+                else:
+
+                    user.is_active = True
+                    user.save()
+
+                    print("✅ STUDENT ACCOUNT ACTIVE")
+
+                # ----------------------------------------
+                # CREATE PROFILE
+                # ----------------------------------------
+                Profile.objects.create(
+                    user=user,
+                    role=role,
+                    student_id=(
+                        student_id
+                        if role == "student"
+                        else None
+                    ),
+                    staff_id=(
+                        staff_id
+                        if role == "supervisor"
+                        else None
+                    ),
+                )
+
+                print("✅ PROFILE CREATED")
+
+                # ----------------------------------------
+                # SUPERVISOR REQUEST
+                # ----------------------------------------
+                if role == "supervisor":
+
+                    supervisor_request = SupervisorRequest.objects.create(
+                        user=user,
+                        first_name="",
+                        last_name="",
+                        email=email,
+                        department=department,
+                        status="PENDING",
+                    )
+
+                    print("✅ SUPERVISOR REQUEST CREATED")
+                    print("Request ID:", supervisor_request.id)
+                    print("Request Status:", supervisor_request.status)
+
+                    messages.success(
+                        request,
+                        "Registration submitted successfully. Your supervisor account is waiting for admin approval."
+                    )
+
+                else:
+
+                    messages.success(
+                        request,
+                        "Student account created successfully."
+                    )
+
+            print("\n✅ TRANSACTION COMPLETED SUCCESSFULLY")
+            print("➡️ REDIRECTING TO LOGIN")
+            print("=" * 70 + "\n")
+
+            return redirect("login")
+
+        except Exception as e:
+
+            print("\n" + "=" * 70)
+            print("❌ REGISTRATION EXCEPTION")
+            print("ERROR TYPE:", type(e).__name__)
+            print("ERROR:", str(e))
+            print("=" * 70 + "\n")
+
+            messages.error(
+                request,
+                f"Registration failed: {e}"
+            )
+
+            return render(
+                request,
+                "register.html",
+                {"form": form}
+            )
+
     else:
+
         form = RegistrationForm()
-    return render(request, 'register.html', {'form': form})
+
+    return render(
+        request,
+        "register.html",
+        {"form": form}
+    )
+
 
 def login_view(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                try:
-                    user_role = user.profile.role.lower()
-                    if user_role == 'supervisor':
-                        return redirect('supervisor_dashboard')
-                    elif user_role == 'student':
-                        return redirect('dashboard')
-                    elif user_role == 'admin':
-                        return redirect('admin_dashboard')
-                except:
-                    pass
-                return redirect('dashboard')
+
+    if request.method == "POST":
+
+        username = request.POST.get("username", "").strip()
+        password = request.POST.get("password", "")
+
+        # ----------------------------------------
+        # CHECK USERNAME
+        # ----------------------------------------
+        try:
+
+            user_obj = User.objects.get(username=username)
+
+        except User.DoesNotExist:
+
+            messages.error(
+                request,
+                "Invalid username or password."
+            )
+
+            return render(
+                request,
+                "login.html"
+            )
+
+        # ----------------------------------------
+        # CHECK PASSWORD
+        # ----------------------------------------
+        if not user_obj.check_password(password):
+
+            messages.error(
+                request,
+                "Invalid username or password."
+            )
+
+            return render(
+                request,
+                "login.html"
+            )
+
+        # ----------------------------------------
+        # CHECK IF ACCOUNT IS INACTIVE
+        # ----------------------------------------
+        if not user_obj.is_active:
+
+            # ----------------------------------------
+            # CHECK IF USER IS SUPERVISOR
+            # ----------------------------------------
+            if hasattr(user_obj, "profile"):
+
+                role = user_obj.profile.role.lower()
+
+                if role == "supervisor":
+
+                    supervisor_request = (
+                        SupervisorRequest.objects
+                        .filter(user=user_obj)
+                        .first()
+                    )
+
+                    # ----------------------------------------
+                    # PENDING
+                    # ----------------------------------------
+                    if supervisor_request:
+
+                        if supervisor_request.status == "PENDING":
+
+                            messages.warning(
+                                request,
+                                "Your supervisor account is waiting for admin approval."
+                            )
+
+                        # ----------------------------------------
+                        # REJECTED
+                        # ----------------------------------------
+                        elif supervisor_request.status == "REJECTED":
+
+                            messages.error(
+                                request,
+                                "Your supervisor registration has been rejected."
+                            )
+
+                        # ----------------------------------------
+                        # APPROVED BUT STILL INACTIVE
+                        # ----------------------------------------
+                        elif supervisor_request.status == "APPROVED":
+
+                            messages.warning(
+                                request,
+                                "Your account has been approved but is currently inactive."
+                            )
+
+                        else:
+
+                            messages.warning(
+                                request,
+                                "Your account is inactive."
+                            )
+
+                    else:
+
+                        messages.warning(
+                            request,
+                            "No supervisor request was found."
+                        )
+
+                else:
+
+                    messages.warning(
+                        request,
+                        "Your account is inactive."
+                    )
+
             else:
-                messages.error(request, "Invalid username or password.")
-        else:
-            messages.error(request, "Invalid login credentials.")
-    else:
-        form = AuthenticationForm()
-    return render(request, 'login.html', {'form': form})
+
+                messages.warning(
+                    request,
+                    "Your account is inactive."
+                )
+
+            return render(
+                request,
+                "login.html"
+            )
+
+        # ----------------------------------------
+        # AUTHENTICATE USER
+        # ----------------------------------------
+        user = authenticate(
+            request,
+            username=username,
+            password=password
+        )
+
+        if user is not None:
+
+            login(request, user)
+
+            # ----------------------------------------
+            # ADMIN
+            # ----------------------------------------
+            if user.is_superuser or user.is_staff:
+
+                return redirect("admin_dashboard")
+
+            # ----------------------------------------
+            # USER ROLE
+            # ----------------------------------------
+            if hasattr(user, "profile"):
+
+                role = user.profile.role.lower()
+
+                # ----------------------------------------
+                # SUPERVISOR
+                # ----------------------------------------
+                if role == "supervisor":
+
+                    return redirect(
+                        "supervisor_dashboard"
+                    )
+
+                # ----------------------------------------
+                # STUDENT
+                # ----------------------------------------
+                elif role == "student":
+
+                    return redirect(
+                        "dashboard"
+                    )
+
+            # ----------------------------------------
+            # DEFAULT
+            # ----------------------------------------
+            return redirect("dashboard")
+
+        # ----------------------------------------
+        # AUTHENTICATION FAILED
+        # ----------------------------------------
+        messages.error(
+            request,
+            "Invalid username or password."
+        )
+
+    return render(
+        request,
+        "login.html"
+    )
 
 def logout_view(request):
     logout(request)
