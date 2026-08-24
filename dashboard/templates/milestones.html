@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Milestones | {{ project.name }}{% endblock %}
+{% block page_title %}Milestones{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-xl font-bold text-slate-900 dark:text-white">Milestones</h1>
+            <p class="text-sm text-slate-500 mt-0.5">{{ project.name }}</p>
+        </div>
+        <button onclick="toggleAddMilestoneModal()"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl transition shadow-sm flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i> Add Milestone
+        </button>
+    </div>
+
+    <div class="flex flex-col gap-4">
+        {% for milestone in milestones %}
+        <div class="card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm p-6">
+
+            <div class="flex items-start justify-between gap-4">
+                <div class="flex items-start gap-4">
+                    <span class="text-sm font-bold text-slate-400 w-6 shrink-0">{{ forloop.counter|stringformat:"02d" }}</span>
+                    <div>
+                        <h3 class="font-bold text-slate-800 dark:text-white">{{ milestone.name }}</h3>
+                        {% if milestone.description %}
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">{{ milestone.description }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <span class="shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1.5
+                    {% if milestone.status == 'completed' %}text-emerald-600 bg-emerald-50
+                    {% elif milestone.status == 'in_progress' %}text-blue-600 bg-blue-50
+                    {% else %}text-slate-500 bg-slate-100{% endif %}">
+                    {% if milestone.status == 'completed' %}
+                        <i class="fa-solid fa-circle-check"></i> Completed
+                    {% elif milestone.status == 'in_progress' %}
+                        <i class="fa-solid fa-circle-dot"></i> In Progress
+                    {% else %}
+                        <i class="fa-regular fa-circle"></i> Not Started
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="mt-4">
+                <div class="w-full bg-slate-100 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
+                    <div class="h-full rounded-full
+                        {% if milestone.status == 'completed' %}bg-emerald-500{% else %}bg-indigo-600{% endif %}"
+                        style="width: {{ milestone.progress_percentage }}%"></div>
+                </div>
+                <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1">{{ milestone.progress_percentage }}%</p>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">
+                <div class="flex items-center gap-5 text-xs text-slate-500 dark:text-slate-400">
+                    {% if milestone.start_date or milestone.end_date %}
+                    <span class="flex items-center gap-1.5">
+                        <i class="fa-regular fa-calendar"></i>
+                        {% if milestone.start_date %}{{ milestone.start_date|date:"M d" }}{% endif %}
+                        {% if milestone.start_date and milestone.end_date %} – {% endif %}
+                        {% if milestone.end_date %}{{ milestone.end_date|date:"M d" }}{% endif %}
+                    </span>
+                    {% endif %}
+                    <span class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-list-check"></i> Tasks: {{ milestone.task_completed }}/{{ milestone.task_total }}
+                    </span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <a href="{% url 'milestone_tasks' milestone.id %}" class="text-xs font-semibold text-indigo-600 hover:text-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-100 hover:bg-indigo-50 transition">
+                        View Tasks
+                    </a>
+                    <button class="text-slate-400 hover:text-slate-600 px-2 py-1.5 rounded-lg hover:bg-slate-100 transition">
+                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="card bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-slate-300 dark:border-slate-600 p-10 text-center">
+            <i class="fa-solid fa-timeline text-5xl text-slate-400 mb-4"></i>
+            <h3 class="text-xl font-bold dark:text-white">No Milestones Yet</h3>
+            <p class="text-slate-500 mt-2">Add your first milestone to start tracking progress.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<!-- ADD MILESTONE MODAL -->
+<div id="addMilestoneModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+        <button type="button" onclick="toggleAddMilestoneModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-sm">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <h3 class="text-base font-bold text-slate-800">Add Milestone</h3>
+        <p class="text-xs text-slate-500 mt-0.5 mb-5">Add a new milestone for {{ project.name }}.</p>
+
+        <form method="POST" action="{% url 'add_milestone' project.id %}" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Milestone Name</label>
+                <input type="text" name="name" placeholder="e.g. System Design" required
+                       class="w-full px-4 py-2.5 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-600 transition">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Description</label>
+                <textarea name="description" rows="2" placeholder="Short description"
+                          class="w-full px-4 py-2.5 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-600 transition"></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Start Date</label>
+                    <input type="date" name="start_date"
+                           class="w-full px-4 py-2.5 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-600 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">End Date</label>
+                    <input type="date" name="end_date"
+                           class="w-full px-4 py-2.5 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-600 transition">
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2">
+                <button type="button" onclick="toggleAddMilestoneModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">Cancel</button>
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-5 py-2 rounded-xl transition shadow-sm">Add</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function toggleAddMilestoneModal() {
+        document.getElementById('addMilestoneModal').classList.toggle('hidden');
+    }
+</script>
+{% endblock %}

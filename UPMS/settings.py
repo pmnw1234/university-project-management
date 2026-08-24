@@ -39,12 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'dashboard',
-<<<<<<< HEAD
+
     'team',
-=======
+
     'supervisor',
     'Roles.apps.RolesConfig',
->>>>>>> 7ce9afe351e51589e5f5be5eac14bb47bf8fee0b
+    'milestoneandtask',
+
 ]
 
 MIDDLEWARE = [
