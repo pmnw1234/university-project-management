@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'dashboard',
+<<<<<<< HEAD
 
     'team',
 
@@ -46,6 +47,12 @@ INSTALLED_APPS = [
     'Roles.apps.RolesConfig',
     'milestoneandtask',
 
+=======
+    'team',
+    'Roles',
+    'supervisor',
+    
+>>>>>>> 7bbd872fb39d21455386f57beb04ef126c376cdc
 ]
 
 MIDDLEWARE = [
@@ -108,8 +115,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-
-
+# Internationalization
+# https://docs.djangoproject.com/en/6.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 

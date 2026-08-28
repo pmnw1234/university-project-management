@@ -1,40 +1,348 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>System Logs | Admin UPMS</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-50 p-8 font-sans">
+{% extends 'base_admin.html' %}
 
-<div class="max-w-4xl mx-auto bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-xl font-bold text-slate-800">All System Activity Logs</h2>
-        <a href="{% url 'admin_dashboard' %}" class="text-xs text-indigo-600 font-medium hover:underline">← Back to Dashboard</a>
-    </div>
+{% block title %}UPMS - System Logs{% endblock %}
+{% block header_title %}SYSTEM LOGS & REQUESTS{% endblock %}
 
-    <div class="space-y-3">
-        {% for log in logs %}
-        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex justify-between items-center">
-            <div>
-                <p class="text-sm font-bold text-slate-800">Registration Attempt: {{ log.full_name }} (@{{ log.username }})</p>
-                <p class="text-xs text-slate-400">Department: {{ log.department }} • Date: {{ log.created_at }}</p>
+{% block content %}
+
+<div class="space-y-6">
+
+    <!-- Auto Refresh -->
+    <meta http-equiv="refresh" content="10">
+
+
+    <!-- ========================================================= -->
+    <!-- PENDING SUPERVISOR REQUESTS -->
+    <!-- ========================================================= -->
+
+    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-4">
+
+            <div class="flex items-center gap-2">
+
+                <div class="p-1.5 bg-amber-50 text-amber-500 rounded-lg">
+                    <i data-lucide="clock" class="w-4 h-4"></i>
+                </div>
+
+                <h2 class="font-bold text-slate-800 text-base">
+                    Pending Supervisor Requests
+                </h2>
+
+                <span class="ml-2 px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">
+                    {{ pending_count }}
+                </span>
+
             </div>
-            <div>
-                {% if log.status == 'Pending' %}
-                    <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-md">Pending</span>
-                {% elif log.status == 'Approved' %}
-                    <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-md">Approved</span>
-                {% else %}
-                    <span class="px-3 py-1 bg-red-100 text-red-800 text-xs font-bold rounded-md">Rejected</span>
-                {% endif %}
+
+
+            <div class="flex items-center gap-2">
+
+                <span class="text-xs text-slate-400">
+                    Auto-refresh: 10s
+                </span>
+
+                <button
+                    type="button"
+                    onclick="location.reload()"
+                    class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition"
+                >
+                    🔄 Refresh
+                </button>
+
             </div>
+
         </div>
-        {% empty %}
-        <p class="text-xs text-slate-400 text-center py-6">No logs present.</p>
-        {% endfor %}
+
+
+        <!-- Pending Requests -->
+        <div class="space-y-3">
+
+            {% for log in pending_logs %}
+
+                <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50 flex justify-between items-center">
+
+                    <!-- Request Information -->
+                    <div>
+
+                        <p class="text-sm font-bold text-slate-800">
+
+                            Registration Attempt:
+
+                            {% if log.user %}
+
+                                {% if log.user.first_name or log.user.last_name %}
+
+                                    {{ log.user.first_name }}
+                                    {{ log.user.last_name }}
+
+                                {% else %}
+
+                                    {{ log.user.username }}
+
+                                {% endif %}
+
+                            {% else %}
+
+                                {{ log.email }}
+
+                            {% endif %}
+
+                        </p>
+
+
+                        <p class="text-xs text-slate-400 mt-0.5">
+
+                            Department:
+                            {{ log.department }}
+
+                            • Email:
+                            {{ log.email }}
+
+                            • Date:
+                            {{ log.created_at|date:"M d, Y H:i" }}
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- Approve / Reject Buttons -->
+                    <div class="flex items-center gap-2">
+
+                        {% if log.pk %}
+
+                            <a
+                                href="{% url 'approve_supervisor_request' log.pk %}"
+                                class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg transition"
+                            >
+                                Approve
+                            </a>
+
+
+                            <a
+                                href="{% url 'reject_supervisor_request' log.pk %}"
+                                class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-lg transition"
+                            >
+                                Reject
+                            </a>
+
+                        {% else %}
+
+                            <span class="text-xs text-red-500">
+                                Invalid request
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+            {% empty %}
+
+                <div class="py-6 text-center">
+
+                    <p class="text-sm text-slate-400">
+                        No pending supervisor requests at this time.
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
     </div>
+
+
+
+    <!-- ========================================================= -->
+    <!-- REQUEST HISTORY -->
+    <!-- ========================================================= -->
+
+    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-4">
+
+            <h2 class="font-bold text-slate-800 text-base">
+                Request History
+            </h2>
+
+            <span class="text-xs text-slate-400">
+                Total: {{ logs|length }} records
+            </span>
+
+        </div>
+
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
+
+            <table class="w-full text-left text-xs">
+
+                <!-- Table Header -->
+                <thead class="bg-slate-50 text-slate-400 uppercase font-semibold border-b border-slate-100">
+
+                    <tr>
+
+                        <th class="py-3 px-4">
+                            ID
+                        </th>
+
+                        <th class="py-3 px-4">
+                            Name
+                        </th>
+
+                        <th class="py-3 px-4">
+                            Email
+                        </th>
+
+                        <th class="py-3 px-4">
+                            Department
+                        </th>
+
+                        <th class="py-3 px-4">
+                            Status
+                        </th>
+
+                        <th class="py-3 px-4">
+                            Date
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <!-- Table Body -->
+                <tbody class="divide-y divide-slate-100">
+
+                    {% for log in logs %}
+
+                    <tr class="hover:bg-slate-50/50 transition">
+
+
+                        <!-- ID -->
+                        <td class="py-3 px-4 text-slate-400 text-center">
+
+                            {{ log.pk }}
+
+                        </td>
+
+
+                        <!-- NAME -->
+                        <td class="py-3 px-4 font-bold text-slate-800">
+
+                            {% if log.user %}
+
+                                {% if log.user.first_name or log.user.last_name %}
+
+                                    {{ log.user.first_name }}
+                                    {{ log.user.last_name }}
+
+                                {% else %}
+
+                                    {{ log.user.username }}
+
+                                {% endif %}
+
+                            {% else %}
+
+                                {{ log.email }}
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- EMAIL -->
+                        <td class="py-3 px-4 text-slate-500">
+
+                            {{ log.email }}
+
+                        </td>
+
+
+                        <!-- DEPARTMENT -->
+                        <td class="py-3 px-4 text-slate-500">
+
+                            {{ log.department }}
+
+                        </td>
+
+
+                        <!-- STATUS -->
+                        <td class="py-3 px-4">
+
+                            {% if log.status == 'PENDING' %}
+
+                                <span class="px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200/60 text-[11px] font-semibold rounded-md">
+
+                                    Pending
+
+                                </span>
+
+                            {% elif log.status == 'APPROVED' %}
+
+                                <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200/60 text-[11px] font-semibold rounded-md">
+
+                                    Approved
+
+                                </span>
+
+                            {% elif log.status == 'REJECTED' %}
+
+                                <span class="px-2.5 py-1 bg-rose-50 text-rose-700 border border-rose-200/60 text-[11px] font-semibold rounded-md">
+
+                                    Rejected
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- DATE -->
+                        <td class="py-3 px-4 text-slate-400">
+
+                            {{ log.created_at|date:"M d, Y H:i" }}
+
+                        </td>
+
+
+                    </tr>
+
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="text-center py-6 text-slate-400"
+                        >
+
+                            No request history found.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
 </div>
 
-</body>
-</html>
+{% endblock %}
