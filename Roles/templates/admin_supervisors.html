@@ -1,0 +1,47 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}UPMS - Supervisors{% endblock %}
+{% block header_title %}SUPERVISORS{% endblock %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="font-bold text-slate-800">All Supervisors ({{ total_supervisors }})</h2>
+        <a href="{% url 'system_logs' %}" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg transition">View Pending Requests</a>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 text-slate-400 uppercase font-semibold border-b border-slate-100">
+                <tr>
+                    <th class="py-3 px-4">Username</th>
+                    <th class="py-3 px-4">Name</th>
+                    <th class="py-3 px-4">Email</th>
+                    <th class="py-3 px-4">Staff ID</th>
+                    <th class="py-3 px-4">Status</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                {% for user in supervisors %}
+                <tr class="hover:bg-slate-50/50 transition">
+                    <td class="py-3 px-4 font-medium text-slate-800">{{ user.username }}</td>
+                    <td class="py-3 px-4">{{ user.get_full_name }}</td>
+                    <td class="py-3 px-4 text-slate-500">{{ user.email }}</td>
+                    <td class="py-3 px-4">{{ user.profile.staff_id|default:'-' }}</td>
+                    <td class="py-3 px-4">
+                        {% if user.is_active %}
+                            <span class="px-2 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-semibold rounded-full">Active</span>
+                        {% else %}
+                            <span class="px-2 py-1 bg-amber-50 text-amber-700 text-[10px] font-semibold rounded-full">Pending</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-10 text-slate-400">No supervisors found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

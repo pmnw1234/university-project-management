@@ -60,10 +60,31 @@ class SupervisorProfileUpdateForm(forms.ModelForm):
         model = Profile
         fields = ['image', 'staff_id', 'department', 'phone', 'office_location', 'bio']
         widgets = {
-            'image': forms.FileInput(attrs={'class': 'w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100'}),
-            'staff_id': forms.TextInput(attrs={'class': 'w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500'}),
-            'department': forms.TextInput(attrs={'class': 'w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500'}),
-            'phone': forms.TextInput(attrs={'class': 'w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500'}),
-            'office_location': forms.TextInput(attrs={'class': 'w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500'}),
-            'bio': forms.Textarea(attrs={'class': 'w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500', 'rows': 4}),
+            'image': forms.FileInput(attrs={'class': 'file-input-custom'}),
+            'staff_id': forms.TextInput(attrs={'class': 'form-control-custom'}),
+            'department': forms.Select(attrs={'class': 'form-select-custom'}, choices=[
+                ('', 'Select Department'),
+                ('Computer Science', 'Computer Science'),
+                ('Information Technology', 'Information Technology'),
+                ('Software Engineering', 'Software Engineering'),
+                ('Electrical Engineering', 'Electrical Engineering'),
+                ('Mechanical Engineering', 'Mechanical Engineering'),
+                ('Business Administration', 'Business Administration'),
+                ('Mathematics', 'Mathematics'),
+                ('Physics', 'Physics'),
+                ('Chemistry', 'Chemistry'),
+                ('Biology', 'Biology'),
+                ('Other', 'Other'),
+            ]),
+            'phone': forms.TextInput(attrs={'class': 'form-control-custom'}),
+            'office_location': forms.TextInput(attrs={'class': 'form-control-custom'}),
+            'bio': forms.Textarea(attrs={'class': 'form-textarea-custom', 'rows': 4, 'placeholder': 'Tell us about your expertise and background...'}),
         }
+    
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if self.cleaned_data.get('image'):
+            instance.image = self.cleaned_data.get('image')
+        if commit:
+            instance.save()
+        return instance
