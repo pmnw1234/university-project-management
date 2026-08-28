@@ -64,9 +64,7 @@ def dashboard_view(request):
     return render(request, 'dashboard.html', context)
 
 def register_view(request):
-
     if request.method == "POST":
-
         print("\n" + "=" * 70)
         print("📝 REGISTRATION POST RECEIVED")
         print("POST DATA:")
@@ -78,33 +76,20 @@ def register_view(request):
         print("\nFORM VALID:", form.is_valid())
 
         if not form.is_valid():
-
             print("\n❌ FORM ERRORS:")
             print(form.errors)
             print("=" * 70 + "\n")
-
-            messages.error(
-                request,
-                "Registration form is invalid. Please check the fields."
-            )
-
-            return render(
-                request,
-                "register.html",
-                {"form": form}
-            )
+            messages.error(request, "Registration form is invalid. Please check the fields.")
+            return render(request, "register.html", {"form": form})
 
         print("\n✅ FORM IS VALID")
 
         username = form.cleaned_data["username"]
         email = form.cleaned_data["email"]
         password = form.cleaned_data["password"]
-
         role = form.cleaned_data["role"].lower()
-
         student_id = form.cleaned_data.get("student_id")
         staff_id = form.cleaned_data.get("staff_id")
-
         department = request.POST.get("department", "General")
 
         print("Username:", username)
@@ -114,100 +99,55 @@ def register_view(request):
         print("Staff ID:", staff_id)
         print("Department:", department)
 
-        # ----------------------------------------
         # DUPLICATE USERNAME
-        # ----------------------------------------
         if User.objects.filter(username=username).exists():
-
             print("❌ USERNAME ALREADY EXISTS")
+            messages.error(request, "Username already exists.")
+            return render(request, "register.html", {"form": form})
 
-            messages.error(
-                request,
-                "Username already exists."
-            )
-
-            return render(
-                request,
-                "register.html",
-                {"form": form}
-            )
-
-        # ----------------------------------------
         # DUPLICATE EMAIL
-        # ----------------------------------------
         if User.objects.filter(email=email).exists():
-
             print("❌ EMAIL ALREADY EXISTS")
-
-            messages.error(
-                request,
-                "Email already exists."
-            )
-
-            return render(
-                request,
-                "register.html",
-                {"form": form}
-            )
+            messages.error(request, "Email already exists.")
+            return render(request, "register.html", {"form": form})
 
         try:
-
             print("\n🔄 STARTING DATABASE TRANSACTION")
 
             with transaction.atomic():
-
-                # ----------------------------------------
                 # CREATE USER
-                # ----------------------------------------
                 user = User.objects.create_user(
                     username=username,
                     email=email,
                     password=password,
                 )
-
                 print("✅ USER CREATED")
                 print("User ID:", user.id)
 
                 # Supervisor must wait for admin
                 if role == "supervisor":
-
                     user.is_active = False
                     user.save()
-
                     print("🔒 SUPERVISOR ACCOUNT SET INACTIVE")
-
                 else:
-
                     user.is_active = True
                     user.save()
-
                     print("✅ STUDENT ACCOUNT ACTIVE")
 
                 # ----------------------------------------
-                # CREATE PROFILE
+                # CREATE PROFILE WITH DEPARTMENT
                 # ----------------------------------------
                 Profile.objects.create(
                     user=user,
                     role=role,
-                    student_id=(
-                        student_id
-                        if role == "student"
-                        else None
-                    ),
-                    staff_id=(
-                        staff_id
-                        if role == "supervisor"
-                        else None
-                    ),
+                    student_id=student_id if role == "student" else None,
+                    staff_id=staff_id if role == "supervisor" else None,
+                    department=department if role == "supervisor" else None,  # FIX: Add department to Profile
                 )
+                print("✅ PROFILE CREATED WITH DEPARTMENT:", department if role == "supervisor" else "N/A")
 
-                print("✅ PROFILE CREATED")
-
-                # ----------------------------------------
                 # SUPERVISOR REQUEST
-                # ----------------------------------------
                 if role == "supervisor":
-
                     supervisor_request = SupervisorRequest.objects.create(
                         user=user,
                         first_name="",
@@ -216,7 +156,6 @@ def register_view(request):
                         department=department,
                         status="PENDING",
                     )
-
                     print("✅ SUPERVISOR REQUEST CREATED")
                     print("Request ID:", supervisor_request.id)
                     print("Request Status:", supervisor_request.status)
@@ -225,9 +164,7 @@ def register_view(request):
                         request,
                         "Registration submitted successfully. Your supervisor account is waiting for admin approval."
                     )
-
                 else:
-
                     messages.success(
                         request,
                         "Student account created successfully."
@@ -236,37 +173,21 @@ def register_view(request):
             print("\n✅ TRANSACTION COMPLETED SUCCESSFULLY")
             print("➡️ REDIRECTING TO LOGIN")
             print("=" * 70 + "\n")
-
             return redirect("login")
 
         except Exception as e:
-
             print("\n" + "=" * 70)
             print("❌ REGISTRATION EXCEPTION")
             print("ERROR TYPE:", type(e).__name__)
             print("ERROR:", str(e))
             print("=" * 70 + "\n")
-
-            messages.error(
-                request,
-                f"Registration failed: {e}"
-            )
-
-            return render(
-                request,
-                "register.html",
-                {"form": form}
-            )
+            messages.error(request, f"Registration failed: {e}")
+            return render(request, "register.html", {"form": form})
 
     else:
-
         form = RegistrationForm()
 
-    return render(
-        request,
-        "register.html",
-        {"form": form}
-    )
+    return render(request, "register.html", {"form": form})
 
 
 def login_view(request):

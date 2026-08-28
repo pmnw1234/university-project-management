@@ -1,0 +1,61 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}UPMS - Departments{% endblock %}
+{% block header_title %}DEPARTMENTS{% endblock %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="font-bold text-slate-800">All Departments</h2>
+        <span class="text-xs text-slate-400">Total: {{ departments|length }}</span>
+    </div>
+    
+    {% if departments %}
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-400 uppercase font-semibold border-b border-slate-100">
+                    <tr>
+                        <th class="py-3 px-4">#</th>
+                        <th class="py-3 px-4">Department Name</th>
+                        <th class="py-3 px-4">Total Supervisors</th>
+                        <th class="py-3 px-4">Total Students</th>
+                        <th class="py-3 px-4">Total Users</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for dept in departments %}
+                    <tr class="hover:bg-slate-50/50 transition">
+                        <td class="py-3 px-4 text-slate-400">{{ forloop.counter }}</td>
+                        <td class="py-3 px-4 font-medium text-slate-800">
+                            <i data-lucide="building-2" class="w-4 h-4 inline mr-2 text-indigo-500"></i>
+                            {{ dept.name }}
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-1 bg-blue-50 text-blue-700 text-[10px] font-semibold rounded-full">
+                                {{ dept.supervisor_count }}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-semibold rounded-full">
+                                {{ dept.student_count }}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 text-[10px] font-semibold rounded-full">
+                                {{ dept.total_count }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center text-slate-400 py-10">
+            <i data-lucide="building-2" class="w-12 h-12 mx-auto mb-3 text-slate-300"></i>
+            <p>No departments found.</p>
+            <p class="text-xs mt-1">Departments will appear here when supervisors register with their department.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

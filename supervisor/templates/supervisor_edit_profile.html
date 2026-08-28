@@ -4,28 +4,214 @@
 
 {% block header_title %}EDIT PROFILE{% endblock %}
 
+{% block extra_css %}
+<style>
+    .form-control-custom {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 14px;
+        transition: all 0.2s;
+        background-color: #f8fafc;
+    }
+    .form-control-custom:focus {
+        outline: none;
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        background-color: #ffffff;
+    }
+    .form-label-custom {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #64748b;
+        margin-bottom: 6px;
+    }
+    .form-textarea-custom {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 14px;
+        transition: all 0.2s;
+        background-color: #f8fafc;
+        min-height: 100px;
+        resize: vertical;
+    }
+    .form-textarea-custom:focus {
+        outline: none;
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        background-color: #ffffff;
+    }
+    .form-select-custom {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 14px;
+        transition: all 0.2s;
+        background-color: #f8fafc;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 36px;
+    }
+    .form-select-custom:focus {
+        outline: none;
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        background-color: #ffffff;
+    }
+    .file-input-custom {
+        width: 100%;
+        padding: 8px;
+        font-size: 13px;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        background-color: #f8fafc;
+    }
+    .file-input-custom::file-selector-button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 8px;
+        background-color: #eef2ff;
+        color: #4f46e5;
+        font-weight: 600;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-right: 12px;
+    }
+    .file-input-custom::file-selector-button:hover {
+        background-color: #dbeafe;
+    }
+    .error-text {
+        color: #ef4444;
+        font-size: 10px;
+        margin-top: 4px;
+    }
+    .page-header {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        padding: 20px 24px;
+        border-radius: 16px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .form-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .section-title {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #94a3b8;
+        margin-bottom: 16px;
+    }
+    .role-badge {
+        font-size: 11px;
+        font-weight: 700;
+        padding: 6px 14px;
+        border-radius: 12px;
+        border: 1px solid #c7d2fe;
+        background-color: #eef2ff;
+        color: #4f46e5;
+    }
+    .btn-cancel {
+        padding: 8px 20px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+        border-radius: 12px;
+        transition: all 0.2s;
+        border: none;
+        background: transparent;
+        text-decoration: none;
+    }
+    .btn-cancel:hover {
+        background-color: #f1f5f9;
+        color: #1e293b;
+    }
+    .btn-save {
+        padding: 8px 24px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #ffffff;
+        background-color: #4f46e5;
+        border: none;
+        border-radius: 12px;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-save:hover {
+        background-color: #4338ca;
+    }
+    .avatar-large {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #e0e7ff;
+    }
+    .message-success {
+        background-color: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        color: #065f46;
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .message-error {
+        background-color: #fef2f2;
+        border: 1px solid #fca5a5;
+        color: #991b1b;
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="max-w-4xl mx-auto space-y-6">
+<div class="container-fluid px-0" style="max-width: 900px;">
 
     <!-- PAGE HEADER -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
+    <div class="page-header d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
         <div>
-            <h2 class="text-xl font-bold text-slate-800">Account Settings</h2>
-            <p class="text-xs text-slate-500 mt-0.5">Manage your personal information, profile photo, and supervisor details.</p>
+            <h2 class="fw-bold text-dark mb-0" style="font-size: 20px;">Account Settings</h2>
+            <p class="text-muted mb-0" style="font-size: 12px;">Manage your personal information, profile photo, and supervisor details.</p>
         </div>
         <div>
-            <span class="text-xs font-bold px-3 py-1.5 rounded-xl border text-indigo-700 bg-indigo-50 border-indigo-200">
+            <span class="role-badge">
                 <i class="bi bi-person-badge me-1"></i> Supervisor
             </span>
         </div>
     </div>
 
-    <!-- MESSAGES NOTIFICATION -->
+    <!-- MESSAGES -->
     {% if messages %}
         {% for message in messages %}
-            <div class="p-4 rounded-xl text-xs font-semibold shadow-sm flex items-center gap-2
-                {% if message.tags == 'success' %}bg-emerald-50 border border-emerald-200 text-emerald-800
-                {% else %}bg-rose-50 border border-rose-200 text-rose-800{% endif %}">
+            <div class="mb-4 {% if message.tags == 'success' %}message-success{% else %}message-error{% endif %}">
                 <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% else %}bi-exclamation-circle-fill{% endif %}"></i>
                 <span>{{ message }}</span>
             </div>
@@ -33,125 +219,127 @@
     {% endif %}
 
     <!-- FORM CARD -->
-    <form method="POST" enctype="multipart/form-data" class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-6">
+    <form method="POST" enctype="multipart/form-data" class="form-card">
         {% csrf_token %}
 
-        <!-- PROFILE PICTURE & HEADER SUMMARY -->
-        <div class="flex flex-col sm:flex-row items-center gap-6 pb-6 border-b border-slate-100">
-            <div class="relative group">
-                {% if request.user.profile.image %}
-                    <img src="{{ request.user.profile.image.url }}" 
+        <!-- PROFILE PICTURE -->
+        <div class="d-flex flex-wrap align-items-center gap-4 pb-4 mb-4 border-bottom">
+            <div>
+                {% if profile.image and profile.image.url %}
+                    <img src="{{ profile.image.url }}" 
                          alt="{{ request.user.username }}" 
-                         class="w-20 h-20 rounded-full object-cover border-2 border-indigo-100 shadow-sm shrink-0">
+                         class="avatar-large" id="profilePreview">
                 {% else %}
-                    <img src="https://ui-avatars.com/api/?name={{ request.user.username }}&background=6366f1&color=fff&size=128" 
+                    <img src="https://ui-avatars.com/api/?name={{ request.user.username }}&background=4f46e5&color=fff&size=128" 
                          alt="{{ request.user.username }}" 
-                         class="w-20 h-20 rounded-full border-2 border-indigo-100 shadow-sm shrink-0">
+                         class="avatar-large" id="profilePreview">
                 {% endif %}
             </div>
-
-            <div class="space-y-2 text-center sm:text-left flex-1">
+            <div class="flex-grow-1">
+                <h5 class="fw-bold text-dark mb-0">{{ request.user.get_full_name|default:request.user.username }}</h5>
+                <p class="text-muted mb-2" style="font-size: 13px;">@{{ request.user.username }} &bull; {{ request.user.email }}</p>
                 <div>
-                    <h3 class="text-base font-bold text-slate-900">{{ request.user.get_full_name|default:request.user.username }}</h3>
-                    <p class="text-xs text-slate-400">@{{ request.user.username }} &bull; {{ request.user.email }}</p>
-                </div>
-                
-                <!-- PROFILE PICTURE FILE INPUT -->
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Change Profile Picture</label>
-                    {{ p_form.image }}
-                    {% if p_form.image.errors %}<p class="text-[10px] text-rose-500 mt-1">{{ p_form.image.errors.0 }}</p>{% endif %}
+                    <label class="form-label-custom">Change Profile Picture</label>
+                    <input type="file" name="image" accept="image/*" class="file-input-custom" id="id_image" onchange="previewImage(event)">
+                    {% if p_form.image.errors %}
+                        <p class="error-text">{{ p_form.image.errors.0 }}</p>
+                    {% endif %}
+                    {% if profile.image %}
+                        <p class="text-muted mt-1" style="font-size: 11px;">Current: {{ profile.image.name|cut:"profile_pics/" }}</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
 
         <!-- SECTION 1: ACCOUNT DETAILS -->
-        <div>
-            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Account Information</h4>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Username</label>
+        <div class="mb-4">
+            <h6 class="section-title">Account Information</h6>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label-custom">Username</label>
                     {{ u_form.username }}
-                    {% if u_form.username.errors %}<p class="text-[10px] text-rose-500 mt-1">{{ u_form.username.errors.0 }}</p>{% endif %}
+                    {% if u_form.username.errors %}
+                        <p class="error-text">{{ u_form.username.errors.0 }}</p>
+                    {% endif %}
                 </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Email Address</label>
+                <div class="col-md-6">
+                    <label class="form-label-custom">Email Address</label>
                     {{ u_form.email }}
-                    {% if u_form.email.errors %}<p class="text-[10px] text-rose-500 mt-1">{{ u_form.email.errors.0 }}</p>{% endif %}
+                    {% if u_form.email.errors %}
+                        <p class="error-text">{{ u_form.email.errors.0 }}</p>
+                    {% endif %}
                 </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">First Name</label>
+                <div class="col-md-6">
+                    <label class="form-label-custom">First Name</label>
                     {{ u_form.first_name }}
-                    {% if u_form.first_name.errors %}<p class="text-[10px] text-rose-500 mt-1">{{ u_form.first_name.errors.0 }}</p>{% endif %}
+                    {% if u_form.first_name.errors %}
+                        <p class="error-text">{{ u_form.first_name.errors.0 }}</p>
+                    {% endif %}
                 </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Last Name</label>
+                <div class="col-md-6">
+                    <label class="form-label-custom">Last Name</label>
                     {{ u_form.last_name }}
-                    {% if u_form.last_name.errors %}<p class="text-[10px] text-rose-500 mt-1">{{ u_form.last_name.errors.0 }}</p>{% endif %}
+                    {% if u_form.last_name.errors %}
+                        <p class="error-text">{{ u_form.last_name.errors.0 }}</p>
+                    {% endif %}
                 </div>
-
             </div>
         </div>
 
         <!-- SECTION 2: SUPERVISOR DETAILS -->
-        <div class="pt-4 border-t border-slate-100">
-            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">
-                <i class="bi bi-person-badge me-1"></i> Supervisor Information
-            </h4>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Staff ID Number</label>
+        <div class="mb-4 pt-3 border-top">
+            <h6 class="section-title"><i class="bi bi-person-badge me-1"></i> Supervisor Information</h6>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label-custom">Staff ID Number</label>
                     {{ p_form.staff_id }}
-                    {% if p_form.staff_id.errors %}<p class="text-[10px] text-rose-500 mt-1">{{ p_form.staff_id.errors.0 }}</p>{% endif %}
+                    {% if p_form.staff_id.errors %}
+                        <p class="error-text">{{ p_form.staff_id.errors.0 }}</p>
+                    {% endif %}
                 </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Department</label>
+                <div class="col-md-6">
+                    <label class="form-label-custom">Department</label>
                     {{ p_form.department }}
-                    {% if p_form.department.errors %}<p class="text-[10px] text-rose-500 mt-1">{{ p_form.department.errors.0 }}</p>{% endif %}
+                    {% if p_form.department.errors %}
+                        <p class="error-text">{{ p_form.department.errors.0 }}</p>
+                    {% endif %}
                 </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Phone Number</label>
+                <div class="col-md-6">
+                    <label class="form-label-custom">Phone Number</label>
                     {{ p_form.phone }}
-                    {% if p_form.phone.errors %}<p class="text-[10px] text-rose-500 mt-1">{{ p_form.phone.errors.0 }}</p>{% endif %}
+                    {% if p_form.phone.errors %}
+                        <p class="error-text">{{ p_form.phone.errors.0 }}</p>
+                    {% endif %}
                 </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Office Location</label>
+                <div class="col-md-6">
+                    <label class="form-label-custom">Office Location</label>
                     {{ p_form.office_location }}
-                    {% if p_form.office_location.errors %}<p class="text-[10px] text-rose-500 mt-1">{{ p_form.office_location.errors.0 }}</p>{% endif %}
+                    {% if p_form.office_location.errors %}
+                        <p class="error-text">{{ p_form.office_location.errors.0 }}</p>
+                    {% endif %}
                 </div>
-
             </div>
         </div>
 
         <!-- SECTION 3: BIO -->
-        <div class="pt-4 border-t border-slate-100">
-            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">
-                <i class="bi bi-person-lines-fill me-1"></i> About You
-            </h4>
-            
+        <div class="mb-4 pt-3 border-top">
+            <h6 class="section-title"><i class="bi bi-person-lines-fill me-1"></i> About You</h6>
             <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Bio / About</label>
+                <label class="form-label-custom">Bio / About</label>
                 {{ p_form.bio }}
-                {% if p_form.bio.errors %}<p class="text-[10px] text-rose-500 mt-1">{{ p_form.bio.errors.0 }}</p>{% endif %}
-                <p class="text-[10px] text-slate-400 mt-1">Brief description of your expertise and background.</p>
+                {% if p_form.bio.errors %}
+                    <p class="error-text">{{ p_form.bio.errors.0 }}</p>
+                {% endif %}
+                <p class="text-muted mt-1" style="font-size: 11px;">Brief description of your expertise and background.</p>
             </div>
         </div>
 
         <!-- FORM ACTION BUTTONS -->
-        <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
-            <a href="{% url 'supervisor_dashboard' %}" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">
+        <div class="d-flex justify-content-end align-items-center gap-3 pt-3 border-top">
+            <a href="{% url 'supervisor_dashboard' %}" class="btn-cancel">
                 Cancel
             </a>
-            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-5 py-2.5 rounded-xl transition shadow-sm flex items-center gap-2">
+            <button type="submit" class="btn-save">
                 <i class="bi bi-floppy"></i>
                 <span>Save Changes</span>
             </button>
@@ -160,4 +348,16 @@
     </form>
 
 </div>
+
+<script>
+    // Preview image before upload
+    function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            const output = document.getElementById('profilePreview');
+            output.src = reader.result;
+        }
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>
 {% endblock %}
